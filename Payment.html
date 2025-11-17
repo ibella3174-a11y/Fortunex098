@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FortuneX - Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .lock {
+      text-align: center;
+      font-size: 30px;
+      color: red;
+      margin: 10px 0;
+    }
+
+    .notice {
+      background: #ffb400;
+      padding: 15px;
+      border-radius: 12px;
+      color: #000;
+      font-weight: 500;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Countdown Box */
+    .timer-box {
+      background: #1a0000;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .timer-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffeb3b;
+    }
+
+    .countdown {
+      font-size: 40px;
+      font-weight: 700;
+      color: red;
+      margin-top: 5px;
+    }
+
+    .timer-note {
+      font-size: 13px;
+      margin-top: 5px;
+      color: #e6e6e6;
+    }
+
+    .account-box {
+      background: #fff6f6;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .account-title {
+      font-weight: 700;
+      text-align: center;
+      color: #2b2b2b;
+    }
+
+    .bank {
+      text-align: center;
+      color: red;
+      font-weight: 600;
+    }
+
+    .acc-number {
+      text-align: center;
+      font-size: 22px;
+      color: #ff9800;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 5px 0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .copy-btn {
+      cursor: pointer;
+      font-size: 18px;
+      color: #444;
+      margin-left: 8px;
+      transition: 0.2s;
+    }
+
+    .copied-msg {
+      display: none;
+      font-size: 13px;
+      color: green;
+      margin-left: 5px;
+    }
+
+    .payment-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(90deg, #ff3c00, #d30000);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 25px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .payment-btn:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+<div id="popup-container"></div>
+
+<style>
+  #popup-container {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    right: 20px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .popup {
+    position: relative;
+    background: #4b0904;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 18px;
+    padding: 14px 20px 10px 26px;
+    margin-bottom: 12px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.5s ease;
+    max-width: 360px;
+    text-align: left;
+    pointer-events: auto;
+  }
+
+ 
+  .popup::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 8px;
+    bottom: 8px;
+    width: 8px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffb100, #ff6b00);
+  }
+
+  .popup.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .popup-main {
+    line-height: 1.5;
+  }
+
+  .popup-name {
+    font-weight: 700;
+    color: #ffce00; /* yellow “Ade” */
+  }
+
+  .popup-plan {
+    font-weight: 700;
+  }
+
+  .popup-time {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #d0c9ff; /* soft gray/blue time text */
+  }
+</style>
+
+<script>
+  const names = [
+    "Ade", "Blessing", "Tunde", "Amaka", "John", "Precious", "Emeka", "Chisom",
+    "David", "Ruth", "Kelechi", "Michael", "Esther", "Faith", "Sodiq",
+    "Chioma", "Kelvin", "Ngozi", "Uche", "Femi"
+  ];
+
+  const locations = [
+    "Lagos", "Abuja", "Port Harcourt", "Enugu", "Ibadan", "Asaba",
+    "Uyo", "Benin", "Jos", "Ilorin", "Warri", "Abeokuta"
+  ];
+
+  const actions = [
+    { textBefore: "just subscribed to", plan: "FORTUNEX STARTER – ₦7,500" },
+    { textBefore: "just subscribed to", plan: "FORTUNEX PLUS – ₦14,500" },
+    { textBefore: "just registered successfully", plan: "" },
+    { textBefore: "just activated their plan", plan: "" },
+    { textBefore: "just upgraded their account", plan: "" },
+    { textBefore: "just received a withdrawal", plan: "" },
+    { textBefore: "just claimed instant fortune", plan: "" },
+    { textBefore: "just joined FortuneX today!", plan: "" }
+  ];
+
+  function randomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function showPopup() {
+    const container = document.getElementById("popup-container");
+    const popup = document.createElement("div");
+    popup.classList.add("popup");
+
+    const name = randomItem(names);
+    const location = randomItem(locations);
+    const action = randomItem(actions);
+    const minsAgo = Math.floor(Math.random() * 10) + 1;
+
+    popup.innerHTML = `
+      <div class="popup-main">
+        <span class="popup-name">${name}</span> from ${location}
+        ${action.textBefore}
+        ${action.plan ? `<span class="popup-plan">${action.plan}</span>` : ""}
+      </div>
+      <div class="popup-time">• ${minsAgo} mins ago</div>
+    `;
+
+    container.appendChild(popup);
+
+
+    setTimeout(() => popup.classList.add("show"), 100);
+
+
+    setTimeout(() => {
+      popup.classList.remove("show");
+      setTimeout(() => popup.remove(), 500);
+    }, 3000);
+  }
+
+ 
+  setInterval(showPopup, 4000);
+  showPopup();
+</script>
+
+  <div class="lock"><i class="fa-solid fa-lock"></i></div>
+
+  <div class="notice">
+    To get your FortuneX Epin and activate your account, kindly make a transfer of exactly ₦7,500 or ₦14,500 to the account below.
+  </div>
+
+  <!-- TIMER -->
+  <div class="timer-box">
+    <div class="timer-title">Secure Payment Portal<br>Complete payment within:</div>
+    <div id="countdown" class="countdown">10:00</div>
+    <div class="timer-note">Complete your transaction safely. Your account will be activated instantly after confirmation.</div>
+  </div>
+
+  <!-- ONE ACCOUNT ONLY -->
+  <div class="account-box">
+    <div class="account-title">FORTUNEX ACCOUNT</div>
+    <div class="bank">Moniepoint MFB</div>
+
+    <div class="acc-number">
+      <span id="acc1">5783684484</span>
+      <i class="fa-solid fa-copy copy-btn" onclick="copyAcc('acc1', this)"></i>
+      <span class="copied-msg">Copied!</span>
+    </div>
+
+    <div class="acc-name">CHIBUIKE P. UGWUANYI </div>
+  </div>
+
+  <a href="https://t.me/buikemedia1?text=Hello!%20FortuneX%20Merchant,%20I%20want%20to%20register%20on%20FortuneX" class="payment-btn">I Have Made My Payment</a>
+
+<script>
+  // Countdown Timer (10 minutes)
+  let timeLeft = 10 * 60;
+
+  function formatTime(sec) {
+    let m = Math.floor(sec / 60);
+    let s = sec % 60;
+    return `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+  }
+
+  let timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("countdown").textContent = formatTime(timeLeft);
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      document.getElementById("countdown").textContent = "00:00";
+    }
+  }, 1000);
+
+  // Copy Function
+  function copyAcc(id, el) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text);
+
+    const msg = el.nextElementSibling;
+    msg.style.display = "inline";
+    el.style.color = "green";
+
+    setTimeout(() => {
+      msg.style.display = "none";
+      el.style.color = "#444";
+    }, 1500);
+  }
+</script>
+
+</body>
+</html>
